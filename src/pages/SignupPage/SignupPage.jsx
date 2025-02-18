@@ -51,7 +51,7 @@ function SignupPage(props) {
     }
 
     const handleSignupButtonOnClick = async () => {
-        if(Object.entries(errors).filter(entry => !!entry[1]) > 0 ) {
+        if(Object.entries(errors).filter(entry => !!entry[1]).length > 0 ) {
             return;
         }
         try {

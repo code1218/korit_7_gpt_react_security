@@ -2,15 +2,16 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { api } from "./api/config/axiosConfig";
 import { healthCheckApi } from "./api/apis/healthCheckApi";
-import { Route, Routes } from "react-router-dom";
+import { Link, Route, Routes } from "react-router-dom";
 import IndexPage from "./pages/IndexPage/IndexPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import SigninPage from "./pages/SigninPage/SigninPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
-import { Container } from "@mui/material";
+import { Box, Button, ButtonGroup, Container, Typography } from "@mui/material";
 import AuthRoute from "./routes/AuthRoute/AuthRoute";
 import { userApi } from "./api/apis/userApi";
 import { jwtDecode } from "jwt-decode";
+import UserRoute from "./routes/UserRoute/UserRoute";
 
 function App() {
 	const healthCheckQuery = useQuery(
@@ -46,12 +47,22 @@ function App() {
 
   	return (
     	<Container maxWidth="lg">
-			<Routes>
-				<Route path="/" element={<IndexPage />} />
-				<Route path="/user/profile" element={<ProfilePage />} />
-				<Route path="/auth/*" element={<AuthRoute />} />
-				
-			</Routes>
+			<Box display={"flex"} justifyContent={"space-between"} mt={3}>
+				<Typography variant="h6">로고</Typography>
+				<ButtonGroup variant="outlined" aria-label="Basic button group">
+					<Link to={"/auth/signin"}><Button>로그인</Button></Link>
+					<Link to={"/auth/signup"}><Button>회원가입</Button></Link>
+				</ButtonGroup>
+			</Box>
+			{
+				!userQuery.isLoading &&
+				<Routes>
+					<Route path="/" element={<IndexPage />} />
+					<Route path="/user/*" element={<UserRoute />} />
+					<Route path="/auth/*" element={<AuthRoute />} />
+				</Routes>
+			}
+			
     	</Container>
   	);
 }
