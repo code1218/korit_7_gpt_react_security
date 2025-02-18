@@ -8,6 +8,9 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import SigninPage from "./pages/SigninPage/SigninPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
 import { Container } from "@mui/material";
+import AuthRoute from "./routes/AuthRoute/AuthRoute";
+import { userApi } from "./api/apis/userApi";
+import { jwtDecode } from "jwt-decode";
 
 function App() {
 	const healthCheckQuery = useQuery(
@@ -25,13 +28,29 @@ function App() {
 		console.log(healthCheckQuery.data.data.status);
 	}
 
+	const userQuery = useQuery(
+		["userQuery"],
+		async () => {
+			const accessToken = localStorage.getItem("AccessToken");
+			if (!accessToken) {
+				return;
+			}
+			const decodedJwt = jwtDecode(accessToken);
+			return userApi(decodedJwt.userId);
+		},
+		{
+			retry: 0,
+			refetchOnWindowFocus: false,
+		}
+	);
+
   	return (
     	<Container maxWidth="lg">
 			<Routes>
 				<Route path="/" element={<IndexPage />} />
-				<Route path="/profile" element={<ProfilePage />} />
-				<Route path="/signin" element={<SigninPage />} />
-				<Route path="/signup" element={<SignupPage />} />
+				<Route path="/user/profile" element={<ProfilePage />} />
+				<Route path="/auth/*" element={<AuthRoute />} />
+				
 			</Routes>
     	</Container>
   	);

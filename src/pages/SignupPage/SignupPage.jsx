@@ -1,9 +1,11 @@
 import { Box, Button, Card, CardContent, Container, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../api/config/axiosConfig';
 
 function SignupPage(props) {
+    const navigate = useNavigate();
+
     const [ signupInput, setSignupInput ] = useState({
         username: "",
         password: "",
@@ -28,7 +30,7 @@ function SignupPage(props) {
     const handleInputOnBlur = (e) => {
         const { name, value } = e.target;
         let message = "";
-        
+
         if(name === "username" && !(/^[a-zA-Z0-9_]{4,16}$/.test(value))) {
             message = "올바른 사용자 이름을 입력하세요."
         }
@@ -42,14 +44,28 @@ function SignupPage(props) {
             message = "올바른 이메일을 입력하세요."
         }
 
-        errors({
+        setErrors({
             ...errors,
             [name]: message
         });
     }
 
     const handleSignupButtonOnClick = async () => {
-
+        if(Object.entries(errors).filter(entry => !!entry[1]) > 0 ) {
+            return;
+        }
+        try {
+            await api.post("/api/auth/signup", signupInput);
+            alert("회원가입 완료.");
+            navigate("/signin");
+        } catch(error) {
+            setErrors({
+                username: error.response.data.data.username,
+                password: "",
+                name: "",
+                email: "",
+            });
+        }
     }
 
     // const handleSignupButtonOnClick = async () => {
@@ -109,7 +125,7 @@ function SignupPage(props) {
                             <Button variant='contained' onClick={handleSignupButtonOnClick}>가입하기</Button>
                         </Box>
                         <Typography variant='h6' textAlign={'center'}>
-                            이미 계정이 있나요? <Link>로그인</Link>
+                            이미 계정이 있나요? <Link to={"/signin"}>로그인</Link>
                         </Typography>
                     </CardContent>
                 </Card>
