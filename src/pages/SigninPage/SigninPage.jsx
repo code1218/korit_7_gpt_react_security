@@ -1,8 +1,8 @@
 import { Box, Button, Card, CardContent, Container, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../../api/config/axiosConfig';
-import { useQueryClient } from 'react-query';
+import { api, setAccessToken } from '../../api/config/axiosConfig';
+import { useQueryClient } from '@tanstack/react-query';
 
 /**
  * 로그인 요구사항
@@ -55,12 +55,8 @@ function SigninPage(props) {
             console.log(response);
 
             const accessToken = response.data.data;
-            localStorage.setItem("AccessToken", accessToken);
-            api.interceptors.request.use(config => {
-                config.headers.Authorization = `Bearer ${accessToken}`;
-                return config;
-            });
-            queryClient.refetchQueries(["userQuery"]);
+            setAccessToken(accessToken);
+            queryClient.invalidateQueries({queryKey: ["userQuery"]});
             setSigninError(false);
             navigate("/");
             // window.location.href = "/";
