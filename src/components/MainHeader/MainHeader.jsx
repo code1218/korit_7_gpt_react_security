@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
-import { api, setAccessToken } from '../../api/config/axiosConfig';
+import React from 'react';
+import { setAccessToken } from '../../api/config/axiosConfig';
 import { useQueryClient } from '@tanstack/react-query';
 import { Box, Button, ButtonGroup, Typography } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
 function MainHeader(props) {
-    console.log("!!!!!!!!")
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const userQueryData = queryClient.getQueryData(["userQuery"]);
-
     const handleLogoutOnClick = () => {
 		setAccessToken(null);
 		queryClient.invalidateQueries({
@@ -33,7 +31,7 @@ function MainHeader(props) {
                     <>
                         <Link to={"/auth/signin"}><Button>로그인</Button></Link>
                         <Link to={"/auth/signup"}><Button>회원가입</Button></Link>
-                    </>	
+                    </>
                 }
             </ButtonGroup>
         </Box>

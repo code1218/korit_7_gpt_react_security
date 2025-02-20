@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, Container, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { api, setAccessToken } from '../../api/config/axiosConfig';
+import { api, setAccessToken, setRefreshToken } from '../../api/config/axiosConfig';
 import { useQueryClient } from '@tanstack/react-query';
 
 /**
@@ -52,14 +52,13 @@ function SigninPage(props) {
 
         try {
             const response = await api.post("/api/auth/signin", signinInput);
-            console.log(response);
-
-            const accessToken = response.data.data;
+            console.log(response.data)
+            const accessToken = response.data.accessToken;
+            const refreshToken = response.data.refreshToken;
             setAccessToken(accessToken);
+            setRefreshToken(refreshToken);
             queryClient.invalidateQueries({queryKey: ["userQuery"]});
-            setSigninError(false);
             navigate("/");
-            // window.location.href = "/";
         } catch(error) {
             setSigninError(true);
         }
